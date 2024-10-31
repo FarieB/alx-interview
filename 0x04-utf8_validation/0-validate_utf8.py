@@ -1,38 +1,27 @@
 #!/usr/bin/python3
-
-"""
-data set represents a valid UTF-8 encoding
-"""
+"""Method that determines if a given data set represents
+a valid UTF-8 encoding"""
 
 def validUTF8(data):
-    # Number of bytes left to process in the current character
-    num_bytes = 0
+    remaining_bytes = 0
 
-    # Masks to check the most significant bits
-    mask1 = 1 << 7  # 10000000
-    mask2 = 1 << 6  # 01000000
+    for num in data:
+        binary = format(num, "#010b")[-8:]  # Get the last 8 bits
 
-    for byte in data:
-        # Only interested in the 8 least significant bits
-        byte = byte & 0xFF
+        if remaining_bytes == 0:
+            # Count the leading 1s to determine the character's byte length
+            leading_ones = sum(1 for bit in binary if bit == '1')
+            if leading_ones == 0:
+                continue  # 1-byte character (ASCII)
+            if leading_ones == 1 or leading_ones > 4:
+                return False  # Invalid leading byte
 
-        if num_bytes == 0:
-            # Determine the number of bytes in this character
-            mask = 1 << 7
-            while mask & byte:
-                num_bytes += 1
-                mask = mask >> 1
-
-            # 1-byte character (ASCII) or invalid
-            if num_bytes == 0:
-                continue
-            if num_bytes == 1 or num_bytes > 4:
-                return False
+            remaining_bytes = leading_ones - 1  # Adjust for continuation bytes
         else:
-            # Check that this byte has the form 10xxxxxx
-            if not (byte & mask1 and not (byte & mask2)):
+            # Check if it’s a valid continuation byte (starts with '10')
+            if not (binary.startswith('10')):
                 return False
 
-        num_bytes -= 1
+        remaining_bytes -= 1
 
-    return num_bytes == 0
+    return remaining_bytes == 0
