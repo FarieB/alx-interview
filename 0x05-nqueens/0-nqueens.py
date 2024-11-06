@@ -1,43 +1,50 @@
 #!/usr/bin/python3
+'''N Queens Challenge'''
+
 import sys
 
-def is_valid(board, row, col):
-    # Checking if placing a queen at (row, col) is safe.
-    for i in range(row):
-        if board[i] == col or \
-           board[i] - i == col - row or \
-           board[i] + i == col + row:
+
+def is_safe(placed_queens, row, col):
+    """Check if a queen can be placed at (row, col) safely."""
+    for r, c in placed_queens:
+        if c == col or abs(row - r) == abs(col - c):
             return False
     return True
 
-def solve_nqueens(N):
-    # Solving the N queens problem and print all solutions.
+
+def solve_nqueens(n):
+    """Solve the N queens problem using backtracking and return solutions."""
     def backtrack(row):
-        if row == N:
-            print([[i, board[i]] for i in range(N)])
+        if row == n:
+            solutions.append(placed_queens[:])
             return
-        for col in range(N):
-            if is_valid(board, row, col):
-                board[row] = col
-                backtrack(row)
-                board[row] = -1
+        for col in range(n):
+            if is_safe(placed_queens, row, col):
+                placed_queens.append([row, col])
+                backtrack(row + 1)
+                placed_queens.pop()
 
-    board = [-1] * N
+    solutions = []
+    placed_queens = []
     backtrack(0)
+    return solutions
 
-if __name__ == "__main__":
+
+if __name__ == '__main__':
     if len(sys.argv) != 2:
         print("Usage: nqueens N")
         sys.exit(1)
 
     try:
-        N = int(sys.argv[1])
+        n = int(sys.argv[1])
     except ValueError:
         print("N must be a number")
         sys.exit(1)
 
-    if N < 4:
+    if n < 4:
         print("N must be at least 4")
         sys.exit(1)
 
-    solve_nqueens(N)
+    solutions = solve_nqueens(n)
+    for solution in solutions:
+        print(solution)
