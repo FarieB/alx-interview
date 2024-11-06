@@ -5,7 +5,7 @@ import sys
 
 
 def is_safe(placed_queens, row, col):
-    """Check if a queen can be placed at (row, col) safely."""
+    # Checking if a queen can be placed at (row, col) safely.
     for r, c in placed_queens:
         if c == col or abs(row - r) == abs(col - c):
             return False
@@ -13,7 +13,7 @@ def is_safe(placed_queens, row, col):
 
 
 def solve_nqueens(n):
-    """Solve the N queens problem using backtracking and return solutions."""
+    # Solve-ing the N queens problem using backtracking and return solutions.
     def backtrack(row):
         if row == n:
             solutions.append(placed_queens[:])
