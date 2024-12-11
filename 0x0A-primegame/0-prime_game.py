@@ -1,46 +1,44 @@
 #!/usr/bin/python3
+"""
+Prime Game
+"""
 
-def is_prime(num):
-    """Check if a number is a prime."""
-    if num < 2:
-        return False
-    for i in range(2, int(num ** 0.5) + 1):
-        if num % i == 0:
-            return False
-    return True
 
-def generate_prime_counts(n):
-    """Generate a list of prime counts up to n."""
-    primes = [0] * (n + 1)
-    count = 0
+def primeNumbers(n):
+    """Return list of prime numbers between 1 and n inclusive
+       Args:
+        n (int): upper boundary of range. lower boundary is always 1
+    """
+    primeNos = []
+    filtered = [True] * (n + 1)
+    for prime in range(2, n + 1):
+        if (filtered[prime]):
+            primeNos.append(prime)
+            for i in range(prime, n + 1, prime):
+                filtered[i] = False
+    return primeNos
 
-    for i in range(1, n + 1):
-        if is_prime(i):
-            count += 1
-        primes[i] = count
-
-    return primes
 
 def isWinner(x, nums):
-    """Determine the winner of the prime game."""
-    if not nums or x < 1:
+    """
+    Determines winner of Prime Game
+    Args:
+        x (int): no. of rounds of game
+        nums (int): upper limit of range for each round
+    Return:
+        Name of winner (Maria or Ben) or None if winner cannot be found
+    """
+    if x is None or nums is None or x == 0 or nums == []:
         return None
-
-    max_n = max(nums)
-    prime_counts = generate_prime_counts(max_n)
-
-    maria_wins = 0
-    ben_wins = 0
-
-    for n in nums:
-        if prime_counts[n] % 2 == 1:
-            maria_wins += 1
+    Maria = Ben = 0
+    for i in range(x):
+        primeNos = primeNumbers(nums[i])
+        if len(primeNos) % 2 == 0:
+            Ben += 1
         else:
-            ben_wins += 1
-
-    if maria_wins > ben_wins:
-        return "Maria"
-    elif ben_wins > maria_wins:
-        return "Ben"
-    else:
-        return None
+            Maria += 1
+    if Maria > Ben:
+        return 'Maria'
+    elif Ben > Maria:
+        return 'Ben'
+    return None
